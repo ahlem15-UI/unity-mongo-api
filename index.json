@@ -1,0 +1,45 @@
+const express = require('express');
+const { MongoClient } = require('mongodb');
+
+const app = express();
+app.use(express.json());
+
+const url = 'mongodb://localhost:27017';
+const dbName = 'maBase';
+let db;
+
+// Connexion MongoDB
+MongoClient.connect(url, { useUnifiedTopology: true })
+    .then(client => {
+        db = client.db(dbName);
+        console.log('Connecté à MongoDB');
+    })
+    .catch(err => console.error(err));
+
+// Exemple de route GET
+app.get('/api/docs', async (req, res) => {
+    try {
+        const docs = await db.collection('maCollection').find().toArray();
+        res.json(docs);
+    } catch (err) {
+        res.status(500).send(err.toString());
+    }
+});
+
+// Exemple de route POST
+app.post('/api/docs', async (req, res) => {
+    try {
+        const result = await db.collection('maCollection').insertOne(req.body);
+        res.json(result);
+    } catch (err) {
+        res.status(500).send(err.toString());
+    }
+});
+
+// Lancement du serveur
+app.listen(3000, () => {
+    console.log('Serveur démarré sur http://localhost:3000');
+});
+{
+
+}
