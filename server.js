@@ -50,5 +50,18 @@ app.post("/moteurs", async (req, res) => {
     await newMoteur.save();
     res.json({ message: "✅ Moteur ajouté !" });
 });
+app.delete("/moteurs/:id", async (req, res) => {
+    const moteurId = req.params.id;
+    try {
+        const moteur = await Moteur.findByIdAndDelete(moteurId);
+        if (moteur) {
+            res.json({ message: "✅ Moteur supprimé !" });
+        } else {
+            res.status(404).json({ message: "Moteur non trouvé" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur", error: error });
+    }
+});
 
 app.listen(3000, () => console.log("🚀 Serveur démarré sur http://localhost:3000"));
